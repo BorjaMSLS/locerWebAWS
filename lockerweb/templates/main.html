@@ -1,0 +1,51 @@
+{% load static %}
+
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bulma.min.css' %}">
+
+
+    <title>LockyNDLocker</title>
+</head>
+<body style="background-image: url('{% static 'images/background.jpeg' %}'); background-size: cover;">
+<header>
+
+    <nav class="navbar is-dark">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <img src="{% static 'images/lock-icon1.png' %}" alt="Logo">
+                <span class="ml-2">LockyNDLocker</span>
+            </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    Menu
+                </a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="">About Us</a>
+                    <a class="navbar-item" href="">Contact Us</a>
+                </div>
+            </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-light" href="login/">Log in</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+<main class="section">
+    {% block content %}
+    <div class="container">
+        <div class="is-flex is-justify-content-center is-align-items-center">
+            <img src="{% static 'images/Logo.png' %}" alt="My Image">
+        </div>
+    </div>
+    {% endblock %}
+</main>
+
+</body>
+</html>

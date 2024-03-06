@@ -1,0 +1,40 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Locker Menu</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bulma.min.css' %}">
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #6e6d6d;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="section">
+    <div class="container is-flex is-justify-content-center is-align-items-center" style="height: 100vh;">
+        <form method="POST" action="{% url 'front_desk' %}">
+            {% csrf_token %}
+            <input type="hidden" name="refresh" value="1">
+            <button class="button is-primary is-large" type="submit" onclick="closeWindow()">It's done!</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function closeWindow() {
+        window.close();
+    }
+</script>
+
+</body>
+</html>

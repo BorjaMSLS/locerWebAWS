@@ -1,0 +1,149 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bulma.min.css' %}">
+    <title>Front Desk</title>
+    <style>
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    background-image: url('{% static 'images/background.jpeg' %}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    flex: 1; /* Take up remaining vertical space */
+    display: flex;
+    flex-direction: column;
+}
+
+
+    </style>
+</head>
+
+<body>
+<header>
+    <nav class="navbar is-dark">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <img src="{% static 'images/lock-icon1.png' %}" alt="Logo">
+                <span class="ml-2">LockyNDLocker</span>
+            </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    Menu
+                </a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="{% url 'user_list' %}">Manage Users</a>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <!-- First area - dropdown list -->
+    <section class="section">
+        <div class="container">
+            <form id="club-form" method="POST" action="{% url 'front_desk' %}">
+                {% csrf_token %}
+                <div class="field">
+                    <label class="label">Select Club</label>
+                    <div class="control">
+                        <div class="select">
+                            <select id="club-select" name="club">
+                                <option value="6" {% if selected_club == '6' %}selected{% endif %}>Albacete</option>
+                                <option value="7" {% if selected_club == '7' %}selected{% endif %}>Mallorca</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-multiline">
+            {% for locker in lockers %}
+            <div class="column is-3"
+                 style="border: 2px solid #ccc; border-radius: 10px; padding: 15px;
+                        margin: 1px; /* Add margin for space between locker blocks */
+                        {% if locker.status == 'FREE' %} background-color: rgb(242, 242, 242); {% endif %}
+                        {% if locker.status == 'RENTED' %} background-color: rgb(153, 255, 221); {% endif %}"
+                 onclick="{% if locker.status == 'RENTED' %}openPopupStaff('{{ locker.id }}'){% else %}openPopupStaffRent('{{ locker.id }}'){% endif %}"
+                 id="locker{{ locker.id }}">
+                <h1 style="text-align: center; font-weight: bold">{{ locker.id }}</h1>
+                <p>Status: {{ locker.status }}</p>
+                <p>Owner: {{ locker.owner_name}}</p>
+            </div>
+            {% if forloop.counter|divisibleby:4 %}
+            <div class="clearfix"></div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+</main>
+<script>
+    const clubSelect = document.getElementById('club-select');
+    const lockerDivs = document.querySelectorAll('.column');
+    var serverIP = '{{ settings.SERVER_API_IP }}';
+    var serverPort = '{{ settings.SERVER_API_PORT }}';
+
+    clubSelect.onchange = function() {
+        document.getElementById('club-form').submit();
+    }
+
+    document.getElementById('club-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const clubId = clubSelect.value;
+        fetch(`/lockers/${clubId}/`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach((locker, index) => {
+                    lockerDivs[index].querySelector('h1').textContent = locker.id;
+                    lockerDivs[index].querySelector('p:nth-of-type(1)').textContent = `Status: ${locker.status}`;
+                    lockerDivs[index].querySelector('p:nth-of-type(2)').textContent = `Owner: ${locker.owner_name}`;
+
+                    // Set the background color based on the locker status
+                    if (locker.status === 'RENTED') {
+                        lockerDivs[index].style.backgroundColor = 'red';
+                    } else if (locker.status === 'FREE') {
+                        lockerDivs[index].style.backgroundColor = 'green';
+                    }
+                });
+            });
+    });
+
+    function openPopupStaff(lockerId) {
+        var url = 'http://16.171.255.249:8082/locker/' + lockerId + '/popup_staff_release/';
+        window.open(url, 'popupWindow', 'width=800,height=600');
+    }
+
+    function openPopupStaffRent(lockerId) {
+        var url = 'http://16.171.255.249:8082/locker/' + lockerId + '/popup_staff/';
+        window.open(url, 'popupWindow', 'width=800,height=600');
+    }
+</script>
+</body>
+</html>

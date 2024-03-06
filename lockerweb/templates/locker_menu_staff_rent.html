@@ -1,0 +1,158 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Locker Menu</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bulma.min.css' %}">
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #6e6d6d;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .search-form-container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-form {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            flex-grow: 0;
+        }
+
+        .user-list-container {
+            flex-grow: 1;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+
+        .user-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .user-item {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .user-item:hover {
+            background-color: #f2f2f2;
+        }
+
+        .popup-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #assign-button {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="search-form-container">
+    <form class="search-form" method="POST" action="{% url 'search_user' locker_id=selected_locker %}">
+        {% csrf_token %}
+        <div class="field has-addons">
+            <div class="control is-expanded">
+                <input class="input search-input" type="text" name="search" placeholder="Search User">
+            </div>
+            <div class="control">
+                <button class="button is-secondary search-button" type="submit">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="user-list-container">
+    <ul class="user-list">
+        {% for user in users %}
+        <li class="user-item" onclick="openPopup('{{selected_locker}}', '{{ user.id }}')">
+            <p>Name: {{ user.name }}</p>
+            <p>Email: {{ user.email}}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="popup-button-container">
+    <button class="button is-primary is-medium" type="button" id="assign-button" style="display: none;">Assign</button>
+</div>
+
+
+
+
+<script>
+    // Use Django settings for server IP and port
+    var serverIP = '{{ settings.SERVER_IP }}';
+    var serverPort = '{{ settings.SERVER_PORT }}';
+
+    function openPopup(lockerId, userId) {
+        // construct the URL for the pop-up window
+        var url = 'http://16.171.255.249:8082/assign/' + lockerId + '/' + userId;
+
+        // create a new button element
+        var button = document.createElement('button');
+        button.innerHTML = 'Assign';
+        button.className = 'button is-primary';
+
+        // add a click event listener to the button
+        button.addEventListener('click', function() {
+            // open the pop-up window
+            window.open(url, 'popupWindow', 'width=800,height=300');
+        });
+
+        // find the container element for the selected user box
+        var section = event.currentTarget.closest('.section');
+
+        // append the new button element to the section element
+        section.appendChild(button);
+    }
+
+    function openPopup(lockerId, userId) {
+        // construct the URL for the pop-up window
+        var url = 'http://16.171.255.249:8082/locker/' + lockerId + '/popup_rent/'+ userId ;
+
+        // open the pop-up window
+        window.open(url, 'popupWindow', 'width=800,height=600');
+    }
+</script>
+
+</body>
+</html>

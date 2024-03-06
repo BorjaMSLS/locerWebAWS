@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bulma.min.css' %}">
+    <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      background-image: url('{% static 'images/background.jpeg' %}');
+      background-size: cover;
+    }
+
+    </style>
+    <title>Front Desk</title>
+    <!-- Include Bulma CSS framework -->
+
+</head>
+
+
+<body style="background-image: url('{% static 'images/background.jpeg' %}'); background-size: cover;">
+<header>
+
+    <nav class="navbar is-dark">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <img src="{% static 'images/lock-icon1.png' %}" alt="Logo">
+                <span class="ml-2">LockyNDLocker</span>
+            </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    Menu
+                </a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="/about/">About Us</a>
+                    <a class="navbar-item" href="/contact/">Contact Us</a>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+<main>
+    <!-- Second area - grid with 3 slots -->
+    <section class="section">
+        <div class="container">
+            <div class="columns is-multiline">
+                {% for locker in lockers %}
+                <div class="column is-3"
+                     style="border: 1px solid #ccc; border-radius: 10px; padding: 10px;"
+                     onclick="openPopupUser('{{ locker.id }}')"
+                     id="locker{{ locker.id }}">
+                    <h1 style="text-align: center; font-weight: bold">{{ locker.id }}</h1>
+                    <p>Status: {{ locker.status }}</p>
+                    <p>Center: {{ locker.center_name }}</p>
+                </div>
+                <script>
+                    // Get a reference to the locker element
+                    const lockerElement = document.getElementById('locker{{ locker.id }}');
+
+                    // Check the status of the locker
+                    if ('{{ locker.status }}' === 'RENTED') {
+                        // Set the background color to red
+                        lockerElement.style.backgroundColor = 'red';
+                    } else if ('{{ locker.status }}' === 'FREE') {
+                        // Set the background color to green
+                        lockerElement.style.backgroundColor = 'green';
+                    }
+                </script>
+
+                {% if forloop.counter|divisibleby:4 %}
+                <div class="clearfix"></div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+
+<script>
+    function openPopupUser(lockerId) {
+    // construct the URL for the pop-up window
+    var url = 'http://127.0.0.1:8000/locker/' + lockerId + '/popup_user/';
+
+    // open the pop-up window
+    window.open(url, 'popupWindow', 'width=800,height=600');
+}
+
+</script>
+</html>

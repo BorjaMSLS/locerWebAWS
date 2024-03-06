@@ -1,0 +1,74 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User list</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bulma.min.css' %}">
+    <style>
+        body {
+            background-image: url('{% static 'images/background.jpeg' %}');
+            background-size: cover;
+
+        }
+        .user-list {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            margin: 2rem auto;
+            max-width: 80%;
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body>
+<header>
+
+    <nav class="navbar is-dark">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <img src="{% static 'images/lock-icon1.png' %}" alt="Logo">
+                <span class="ml-2">LockyNDLocker</span>
+            </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+    <a class="navbar-link">
+        Menu
+    </a>
+    <div class="navbar-dropdown">
+        <a class="navbar-item" href="{% url 'front_desk' %}">Manage Lockers</a>
+    </div>
+</div>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title">User List</h1>
+        <div class="user-list">
+            <ul>
+                {% for user in users %}
+                <li>{{ user.name }} - {{ user.email }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <form method="POST" action="{% url 'capture_user' %}">
+            {% csrf_token %}
+            <button type="submit" class="button is-primary">Add User</button>
+        </form>
+    </div>
+</section>
+
+
+</body>
+</html>
+
+
+</body>
+</html>
